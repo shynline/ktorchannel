@@ -36,7 +36,6 @@ class Channels @ExperimentalWebSocketExtensionApi constructor(
 
     private fun handleMessage(dataString: String){
         val data = dataString.deserializeToHashMap()
-        println("received: $dataString")
         val channel = data["channel"] ?: return
         val type = data["type"] ?: return
         val encodedMessage = data["encodedMessage"] ?: return
@@ -45,11 +44,9 @@ class Channels @ExperimentalWebSocketExtensionApi constructor(
 
     internal fun subscribe(channel: String, callback: (message: String, type: String) -> Unit){
         subscriptions[channel] = callback
-        println("Subscribed: $channel")
     }
     internal fun unsubscribe(channel: String){
         subscriptions.remove(channel)
-        println("Unsubscribed: $channel")
     }
 
     internal fun sendToChannelByte(channel: String, message: ByteArray){
@@ -59,7 +56,6 @@ class Channels @ExperimentalWebSocketExtensionApi constructor(
             put("type", "byte")
             put("message", String(encodedMessage))
         }
-        println("Publishing: ${data.serialize()}")
         connection.sync().publish("default", data.serialize())
     }
 
@@ -70,7 +66,6 @@ class Channels @ExperimentalWebSocketExtensionApi constructor(
             put("type", "text")
             put("message", String(encodedMessage))
         }
-        println("Publishing: ${data.serialize()}")
         connection.sync().publish("default", data.serialize())
     }
 

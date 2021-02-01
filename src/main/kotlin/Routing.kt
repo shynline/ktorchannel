@@ -59,9 +59,12 @@ fun Route.channels(path: String, consumerClass: KClass<out WebSocketConsumer>) {
         // Here we receive all forwarded messages
         channels.subscribe(channelId){message, type ->
             launch {
+                println("Incoming from channel")
                 val messageByteArray = Base64.getDecoder().decode(message)
                 if (type == "text") {
-                    send(Frame.Text(true, messageByteArray))
+                    val string = String(messageByteArray)
+                    println(string)
+                    send(Frame.Text(string))
                 } else if (type == "byte"){
                     send(Frame.Binary(true, messageByteArray))
                 }
@@ -73,11 +76,10 @@ fun Route.channels(path: String, consumerClass: KClass<out WebSocketConsumer>) {
             webSocketInstance.onConnect()
             for (frame in incoming) {
                 when (frame) {
-                    is Frame.Binary -> webSocketInstance.onByteMessage(frame.readBytes())
-                    is Frame.Text -> webSocketInstance.onTextMessage(frame.readText())
+                    is Frame.Binary -> webSocketScope.launch { webSocketInstance.onByteMessage(frame.readBytes()) }
+                    is Frame.Text -> webSocketScope.launch { webSocketInstance.onTextMessage(frame.readText()) }
                     else -> {}
                 }
-                println("yielding")
                 yield()
                 println("yield $isActive")
             }
@@ -85,11 +87,11 @@ fun Route.channels(path: String, consumerClass: KClass<out WebSocketConsumer>) {
             println("Close exception")
         } catch (e: Throwable) {
             println("Exception $e")
-            webSocketInstance.onError(closeReason.await(), e)
+            webSocketScope.launch { webSocketInstance.onError(closeReason.await(), e) }
             webSocketJob.complete()
         } finally {
             println("Finally")
-            webSocketInstance.onClose(closeReason.await())
+            webSocketScope.launch { webSocketInstance.onClose(closeReason.await()) }
             webSocketJob.complete()
             channels.unsubscribe(channelId)
         }
