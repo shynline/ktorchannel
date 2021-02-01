@@ -39,9 +39,9 @@ class Channels @ExperimentalWebSocketExtensionApi constructor(
         val data = dataString.deserializeToHashMap()
         val channel = data["channel"] ?: return
         val type = data["type"] ?: return
-        val encodedMessage = data["encodedMessage"] ?: return
+        val message = data["message"] ?: return
         println("Message deserialized : $data")
-        subscriptions[channel]?.invoke(encodedMessage, type)
+        subscriptions[channel]?.invoke(message, type)
     }
 
     internal fun subscribe(channel: String, callback: (message: String, type: String) -> Unit){

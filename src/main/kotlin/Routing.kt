@@ -19,10 +19,10 @@ fun Route.channels(path: String, consumerClass: KClass<out WebSocketConsumer>) {
 
         val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
             launch {
-                close(CloseReason(CloseReason.Codes.INTERNAL_ERROR,"Internal error"))
+                close(CloseReason(CloseReason.Codes.INTERNAL_ERROR, "Internal error"))
             }
         }
-        val webSocketJob : CompletableJob = SupervisorJob()
+        val webSocketJob: CompletableJob = SupervisorJob()
         val webSocketScope = CoroutineScope(channels.coroutineContext + webSocketJob + exceptionHandler)
 
         // Configuring the consumer channel listener
@@ -62,13 +62,13 @@ fun Route.channels(path: String, consumerClass: KClass<out WebSocketConsumer>) {
 
         // Subscribe this connection
         // Here we receive all forwarded messages
-        channels.subscribe(channelId){message, type ->
+        channels.subscribe(channelId) { message, type ->
             launch {
                 println("Incoming from channel")
                 if (type == "text") {
                     println(message)
                     send(Frame.Text(message))
-                } else if (type == "byte"){
+                } else if (type == "byte") {
                     send(Frame.Binary(true, Base64.getDecoder().decode(message)))
                 }
             }
@@ -81,13 +81,16 @@ fun Route.channels(path: String, consumerClass: KClass<out WebSocketConsumer>) {
                 when (frame) {
                     is Frame.Binary -> webSocketScope.launch { webSocketInstance.onByteMessage(frame.readBytes()) }
                     is Frame.Text -> webSocketScope.launch { webSocketInstance.onTextMessage(frame.readText()) }
-                    else -> {}
+                    else -> {
+                    }
                 }
                 yield()
                 println("yield $isActive")
             }
         } catch (e: ClosedReceiveChannelException) {
             println("Close exception")
+        } catch (e: CancellationException) {
+            println("Ignored CancellationException")
         } catch (e: Throwable) {
             println("Exception $e")
             webSocketScope.launch { webSocketInstance.onError(closeReason.await(), e) }
