@@ -19,6 +19,7 @@ fun Route.channels(path: String, consumerClass: KClass<out WebSocketConsumer>) {
 
         val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
             launch {
+                webSocketInstance.onError(null, throwable)
                 close(CloseReason(CloseReason.Codes.INTERNAL_ERROR, "Internal error"))
             }
         }
