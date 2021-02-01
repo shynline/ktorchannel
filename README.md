@@ -18,7 +18,10 @@ Using KtorChannel is super easy.
 
 A consumer is a subclass of `WebSocketConsumer` and it will be created once per WebSocket connection
 ```
-class MyConsumer: WebSocketConsumer(){}
+class MyConsumer: WebSocketConsumer(){
+        override suspend fun onConnect() {}
+        override suspend fun onTextMessage(message: String){}
+}
 ```
 Each connection came with an ID which is unique for every connection that made through entire system.
 
