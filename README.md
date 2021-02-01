@@ -2,6 +2,15 @@
 [![](https://jitpack.io/v/shynline/ktorchannel.svg)](https://jitpack.io/#shynline/ktorchannel)
 [![Twitter](https://img.shields.io/badge/Twitter-%40shynline-red?style=flat)](http://twitter.com/shynline)
 
+KtorChannel is a Ktor Websocket wrapper which act as a Ktor feature.
+
+The main purpose of KtorChannel is to provide a solution to support Ktor WebSocket in multi instance server out of the box.(Horizontal scaled servers).
+It uses redis server as a medium to communicate with other instances and provides cross forwarding(Sending) messages.
+
+Also
+It gives you an intuitive way to manage WebSockets and its lifecycle with `WebSocketConsumer`
+
+
 ## Usage
 Using KtorChannel is super easy.
 
