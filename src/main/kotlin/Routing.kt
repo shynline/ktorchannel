@@ -17,8 +17,13 @@ fun Route.channels(path: String, consumerClass: KClass<out WebSocketConsumer>) {
         // Instantiating a user provided consumer class which represent a single socket life cycle
         val webSocketInstance = consumerClass.constructors.first().call()
 
+        val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+            launch {
+                close(CloseReason(CloseReason.Codes.INTERNAL_ERROR,"Internal error"))
+            }
+        }
         val webSocketJob : CompletableJob = SupervisorJob()
-        val webSocketScope = CoroutineScope(channels.coroutineContext + webSocketJob)
+        val webSocketScope = CoroutineScope(channels.coroutineContext + webSocketJob + exceptionHandler)
 
         // Configuring the consumer channel listener
         // Note that the reason we don't use constructor is to make base class constructor clean for the user
@@ -60,16 +65,14 @@ fun Route.channels(path: String, consumerClass: KClass<out WebSocketConsumer>) {
         channels.subscribe(channelId){message, type ->
             launch {
                 println("Incoming from channel")
-                val messageByteArray = Base64.getDecoder().decode(message)
                 if (type == "text") {
-                    val string = String(messageByteArray)
-                    println(string)
-                    send(Frame.Text(string))
+                    println(message)
+                    send(Frame.Text(message))
                 } else if (type == "byte"){
-                    send(Frame.Binary(true, messageByteArray))
+                    send(Frame.Binary(true, Base64.getDecoder().decode(message)))
                 }
             }
-        }
+        }// forward check + exception handling
 
         try {
             // Notify consumer #onConnect

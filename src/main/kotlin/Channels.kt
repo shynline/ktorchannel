@@ -35,10 +35,12 @@ class Channels @ExperimentalWebSocketExtensionApi constructor(
     }
 
     private fun handleMessage(dataString: String){
+        println("raw Message received")
         val data = dataString.deserializeToHashMap()
         val channel = data["channel"] ?: return
         val type = data["type"] ?: return
         val encodedMessage = data["encodedMessage"] ?: return
+        println("Message deserialized : $data")
         subscriptions[channel]?.invoke(encodedMessage, type)
     }
 
@@ -60,11 +62,10 @@ class Channels @ExperimentalWebSocketExtensionApi constructor(
     }
 
     internal fun sendToChannelString(channel: String, message: String){
-        val encodedMessage = Base64.getEncoder().encode(message.toByteArray())
         val data = HashMap<String, String>().apply {
             put("channel", channel)
             put("type", "text")
-            put("message", String(encodedMessage))
+            put("message", message)
         }
         connection.sync().publish("default", data.serialize())
     }
