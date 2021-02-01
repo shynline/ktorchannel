@@ -23,10 +23,11 @@ class Channels @ExperimentalWebSocketExtensionApi constructor(
     private val subscriptions : HashMap<String, (String, String) -> Unit> = hashMapOf()
     private val redisClient: RedisClient = RedisClient.create(redisHost)
     private val connection = redisClient.connectPubSub()
+    private val subConnection = redisClient.connectPubSub()
 
     init {
         require(redisHost.isNotBlank())
-        val reactive = connection.reactive()
+        val reactive = subConnection.reactive()
         reactive.subscribe("default").subscribe()
         reactive.observeChannels().doOnNext {
             handleMessage(it.message)
@@ -44,9 +45,11 @@ class Channels @ExperimentalWebSocketExtensionApi constructor(
 
     internal fun subscribe(channel: String, callback: (message: String, type: String) -> Unit){
         subscriptions[channel] = callback
+        println("Subscribed: $channel")
     }
     internal fun unsubscribe(channel: String){
         subscriptions.remove(channel)
+        println("Unsubscribed: $channel")
     }
 
     internal fun sendToChannelByte(channel: String, message: ByteArray){
