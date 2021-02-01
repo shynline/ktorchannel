@@ -14,13 +14,19 @@ Each connection came with an ID which is unique for every connection that made t
 The ID will change on each connect and it's accessible through consumer's property `channel`.
 
 The consumer provides a hand full of callbacks that you can override if you need to
+
 `onConnect`
+
 `onByteMessage`
+
 `onTextMessage`
+
 `onError`
+
 `onClose`
 
-it also somes with a `webSocketScope` that respects the WebSocket lifecycle
+It also somes with a `webSocketScope` that respects the WebSocket lifecycle
+
 And for the last but not least it offers you a few functions as such
 
 `suspend fun sendText(message: String)`
@@ -36,6 +42,7 @@ And for the last but not least it offers you a few functions as such
 The forward methods are used to send messages between sockets with `channel` id.
 
 -Second you just simply install to your Ktor project
+
 ```
 install(Channels){
         redisHost = "redis://host:port"
@@ -45,10 +52,13 @@ install(Channels){
         masking = false
     }
 ```
+
 `redisHost` is the only parameter used in KtorChannel. the rest are Standard Ktor WebSocket params
 
 -Third
+
 Just like you do in Ktor WebSocket
+
 ```
 routing {
         channels("/", MyConsumer::class)
