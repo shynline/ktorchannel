@@ -75,10 +75,6 @@ fun Route.channels(path: String, consumerClass: KClass<out WebSocketConsumer>) {
                 when (frame) {
                     is Frame.Binary -> webSocketInstance.onByteMessage(frame.readBytes())
                     is Frame.Text -> webSocketInstance.onTextMessage(frame.readText())
-                    is Frame.Close -> {
-                        close(reason = CloseReason(code = CloseReason.Codes.NORMAL, message = "Closed by peer"))
-                        throw ClosedReceiveChannelException("Closed by peer")
-                    }
                     else -> {}
                 }
             }
