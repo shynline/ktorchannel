@@ -12,23 +12,9 @@ repositories {
     maven { setUrl("https://jitpack.io") }
 }
 ```
-
-or
-
-```
-// build.gradle
-allprojects {
-    maven { url "https://jitpack.io" }
-}
-```
 and then, add the dependency:
 
 ```
 // build.gradle.kts
 implementation("com.github.shynline:ktorchannel:{version}")
-```
-or
-```
-// build.gradle
-implementation 'com.github.shynline:ktorchannel:{version}'
 ```
