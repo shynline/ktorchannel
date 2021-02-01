@@ -1,7 +1,7 @@
 plugins {
     `java-library`
     kotlin("jvm") version "1.4.20"
-    `maven-publish`
+    maven
 }
 
 group = "com.github.shynline"
