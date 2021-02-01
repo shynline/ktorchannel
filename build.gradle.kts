@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.shynline"
-version = "1.0-beta1"
+version = "1.0-beta2"
 val ktorVersion = "1.5.0"
 
 repositories {
