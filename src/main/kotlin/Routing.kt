@@ -45,7 +45,7 @@ fun Route.channels(path: String, consumerClass: KClass<out WebSocketConsumer>) {
                 send(Frame.Text(message))
             }
 
-            override suspend fun close(reason: CloseReason) {
+            override suspend fun internalClose(reason: CloseReason) {
                 close(reason)
             }
 
@@ -76,19 +76,18 @@ fun Route.channels(path: String, consumerClass: KClass<out WebSocketConsumer>) {
                     is Frame.Binary -> webSocketInstance.onByteMessage(frame.readBytes())
                     is Frame.Text -> webSocketInstance.onTextMessage(frame.readText())
                     is Frame.Close -> {
-                        close(reason = CloseReason(code = CloseReason.Codes.NORMAL, message = "Closed by client"))
+                        close(reason = CloseReason(code = CloseReason.Codes.NORMAL, message = "Closed by peer"))
+                        throw ClosedReceiveChannelException("Closed by peer")
                     }
                     else -> {}
                 }
-
             }
         } catch (e: ClosedReceiveChannelException) {
-            webSocketInstance.onClose(closeReason.await())
-            webSocketJob.complete()
+
         } catch (e: Throwable) {
             webSocketInstance.onError(closeReason.await(), e)
-            webSocketJob.complete()
         } finally {
+            webSocketInstance.onClose(closeReason.await())
             webSocketJob.complete()
             channels.unsubscribe(channelId)
         }

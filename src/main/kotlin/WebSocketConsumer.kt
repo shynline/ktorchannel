@@ -26,6 +26,6 @@ abstract class WebSocketConsumer {
         internalChannelListener.sendText(message)
     }
     suspend fun close(reason: CloseReason){
-        internalChannelListener.close(reason)
+        internalChannelListener.internalClose(reason)
     }
 }

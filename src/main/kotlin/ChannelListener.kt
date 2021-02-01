@@ -6,7 +6,7 @@ internal interface ChannelListener {
     suspend fun forwardText(channel: String,  message: String)
     suspend fun sendByte(message: ByteArray)
     suspend fun sendText(message: String)
-    suspend fun close(reason: CloseReason)
+    suspend fun internalClose(reason: CloseReason)
     fun getChannelId(): String
     fun getCoroutineScope(): CoroutineScope
 }
