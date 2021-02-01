@@ -77,6 +77,7 @@ fun Route.channels(path: String, consumerClass: KClass<out WebSocketConsumer>) {
                     is Frame.Text -> webSocketInstance.onTextMessage(frame.readText())
                     else -> {}
                 }
+                yield()
             }
         } catch (e: ClosedReceiveChannelException) {
 
