@@ -86,7 +86,7 @@ fun Route.channels(path: String, consumerClass: KClass<out WebSocketConsumer>) {
         } catch (e: Throwable) {
             println("Exception $e")
             webSocketInstance.onError(closeReason.await(), e)
-            close(CloseReason(CloseReason.Codes.INTERNAL_ERROR,"Internal error"))
+            webSocketJob.complete()
         } finally {
             println("Finally")
             webSocketInstance.onClose(closeReason.await())

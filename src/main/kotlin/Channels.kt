@@ -40,7 +40,7 @@ class Channels @ExperimentalWebSocketExtensionApi constructor(
         val channel = data["channel"] ?: return
         val type = data["type"] ?: return
         val encodedMessage = data["encodedMessage"] ?: return
-        subscriptions[channel]?.invoke(String(Base64.getDecoder().decode(encodedMessage)), type)
+        subscriptions[channel]?.invoke(encodedMessage, type)
     }
 
     internal fun subscribe(channel: String, callback: (message: String, type: String) -> Unit){
