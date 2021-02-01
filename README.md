@@ -5,7 +5,8 @@
 ## Usage
 Using KtorChannel is super easy.
 
--First you need to have a consumer
+-First you need to a consumer
+
 A consumer is a subclass of `WebSocketConsumer` and it will be created once per WebSocket connection
 ```
 class MyConsumer: WebSocketConsumer(){}
