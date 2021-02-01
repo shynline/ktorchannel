@@ -14,7 +14,7 @@ It gives you an intuitive way to manage WebSockets and its lifecycle with `WebSo
 ## Usage
 Using KtorChannel is super easy.
 
--First you need to a consumer
+-First you need a consumer
 
 A consumer is a subclass of `WebSocketConsumer` and it will be created once per WebSocket connection
 ```
@@ -39,7 +39,7 @@ The consumer provides a hand full of callbacks that you can override if you need
 
 `onClose`
 
-It also somes with a `webSocketScope` that respects the WebSocket lifecycle
+It also comes with a `webSocketScope` that respects the WebSocket lifecycle
 
 And for the last but not least it offers you a few functions as such
 
