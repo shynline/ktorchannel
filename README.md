@@ -11,8 +11,9 @@ A consumer is a subclass of `WebSocketConsumer` and it will be created once per 
 ```
 class MyConsumer: WebSocketConsumer(){}
 ```
-Each connection came with an ID which is unique for every connection that made through entire system
-The ID will change on each connect and it's accessible through consumer's property `channel`.
+Each connection came with an ID which is unique for every connection that made through entire system.
+
+The ID will change on each connect event and it's accessible through consumer's property `channel`.
 
 The consumer provides a hand full of callbacks that you can override if you need to
 
