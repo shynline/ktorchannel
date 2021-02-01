@@ -1,3 +1,5 @@
+package com.github.shynline
+
 import io.ktor.application.*
 import io.ktor.http.cio.websocket.*
 import io.ktor.routing.*

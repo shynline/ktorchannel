@@ -1,8 +1,7 @@
+package com.github.shynline
+
 import io.ktor.http.cio.websocket.*
-import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 
 abstract class WebSocketConsumer {
     val webSocketScope: CoroutineScope by lazy { internalChannelListener.getCoroutineScope() }

@@ -1,6 +1,7 @@
+package com.github.shynline
+
 import io.ktor.application.*
 import io.ktor.http.cio.websocket.*
-import io.ktor.response.*
 import io.ktor.util.*
 import io.ktor.websocket.*
 import io.lettuce.core.RedisClient
@@ -128,7 +129,7 @@ class Channels @ExperimentalWebSocketExtensionApi constructor(
      * Feature installation object.
      */
     companion object Feature : ApplicationFeature<Application, ChannelsOptions, Channels> {
-        override val key: AttributeKey<Channels> = AttributeKey("Channels")
+        override val key: AttributeKey<Channels> = AttributeKey("com.github.shynline.Channels")
 
         override fun install(
             pipeline: Application,
@@ -147,7 +148,7 @@ class Channels @ExperimentalWebSocketExtensionApi constructor(
                 }
             }
             @OptIn(ExperimentalWebSocketExtensionApi::class)
-            val channels =  Channels(webSockets, config.redisHost)
+            val channels = Channels(webSockets, config.redisHost)
 
             pipeline.environment.monitor.subscribe(ApplicationStopPreparing) {
                 channels.shutdown()

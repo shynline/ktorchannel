@@ -1,3 +1,5 @@
+package com.github.shynline
+
 import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.CoroutineScope
 
