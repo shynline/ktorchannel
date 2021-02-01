@@ -68,22 +68,26 @@ fun Route.channels(path: String, consumerClass: KClass<out WebSocketConsumer>) {
             }
         }
 
-        // Notify consumer #onConnect
-        webSocketInstance.onConnect()
         try {
+            // Notify consumer #onConnect
+            webSocketInstance.onConnect()
             for (frame in incoming) {
                 when (frame) {
                     is Frame.Binary -> webSocketInstance.onByteMessage(frame.readBytes())
                     is Frame.Text -> webSocketInstance.onTextMessage(frame.readText())
                     else -> {}
                 }
+                println("yielding")
                 yield()
+                println("yield $isActive")
             }
         } catch (e: ClosedReceiveChannelException) {
-
+            println("Close exception")
         } catch (e: Throwable) {
+            println("Exception $e")
             webSocketInstance.onError(closeReason.await(), e)
         } finally {
+            println("Finally")
             webSocketInstance.onClose(closeReason.await())
             webSocketJob.complete()
             channels.unsubscribe(channelId)

@@ -22,10 +22,24 @@ class Channels @ExperimentalWebSocketExtensionApi constructor(
 
     private val subscriptions : HashMap<String, (String, String) -> Unit> = hashMapOf()
     private val redisClient: RedisClient = RedisClient.create(redisHost)
-    private val pubsub = redisClient.connectPubSub()
+    private val connection = redisClient.connectPubSub()
 
     init {
         require(redisHost.isNotBlank())
+        val reactive = connection.reactive()
+        reactive.subscribe("default").subscribe()
+        reactive.observeChannels().doOnNext {
+            handleMessage(it.message)
+        }.subscribe()
+    }
+
+    private fun handleMessage(dataString: String){
+        val data = dataString.deserializeToHashMap()
+        println("received: $dataString")
+        val channel = data["channel"] ?: return
+        val type = data["type"] ?: return
+        val encodedMessage = data["encodedMessage"] ?: return
+        subscriptions[channel]?.invoke(String(Base64.getDecoder().decode(encodedMessage)), type)
     }
 
     internal fun subscribe(channel: String, callback: (message: String, type: String) -> Unit){
@@ -42,7 +56,8 @@ class Channels @ExperimentalWebSocketExtensionApi constructor(
             put("type", "byte")
             put("message", String(encodedMessage))
         }
-        pubsub.sync().publish("default", data.serialize())
+        println("Publishing: ${data.serialize()}")
+        connection.sync().publish("default", data.serialize())
     }
 
     internal fun sendToChannelString(channel: String, message: String){
@@ -52,7 +67,8 @@ class Channels @ExperimentalWebSocketExtensionApi constructor(
             put("type", "text")
             put("message", String(encodedMessage))
         }
-        pubsub.sync().publish("default", data.serialize())
+        println("Publishing: ${data.serialize()}")
+        connection.sync().publish("default", data.serialize())
     }
 
     private fun shutdown() {
